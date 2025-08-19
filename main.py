@@ -1,23 +1,12 @@
-# Install required packages if you don't have them:
-# pip install pandas plotly TA-Lib
 
 import pandas as pd
 import plotly.graph_objects as go
 import talib
-
-# -----------------------------
-# Step 1: Load CSV Data
-# -----------------------------
-file_path = 'data.csv'  # Replace with your CSV file path
+file_path = 'data.csv' 
 df = pd.read_csv(file_path)
-
-# Ensure proper datetime format
 df['Date'] = pd.to_datetime(df['Date'])
 df = df.sort_values('Date')
 
-# -----------------------------
-# Step 2: Detect Candlestick Patterns
-# -----------------------------
 patterns = {
     'Morning Star': talib.CDLMORNINGSTAR(df['Open'], df['High'], df['Low'], df['Close']),
     'Evening Star': talib.CDLEVENINGSTAR(df['Open'], df['High'], df['Low'], df['Close']),
@@ -39,9 +28,6 @@ fig = go.Figure(data=[go.Candlestick(
     name='Candlesticks'
 )])
 
-# -----------------------------
-# Step 4: Overlay Patterns
-# -----------------------------
 marker_colors = {
     'Morning Star': 'blue',
     'Evening Star': 'orange',
@@ -65,7 +51,6 @@ marker_symbols = {
 for pattern_name, pattern_values in patterns.items():
     pattern_dates = df['Date'][pattern_values != 0]
     if not pattern_dates.empty:
-        # Choose Y positions slightly above/below for visibility
         if pattern_name in ['Morning Star', 'Bullish Engulfing', 'Hammer']:
             y_vals = df.loc[pattern_values != 0, 'Low'] * 0.995
         else:
@@ -83,9 +68,6 @@ for pattern_name, pattern_values in patterns.items():
             name=pattern_name
         ))
 
-# -----------------------------
-# Step 5: Layout
-# -----------------------------
 fig.update_layout(
     title='Apex Trading (Akkyaaa)',
     xaxis_title='Date',
@@ -95,3 +77,4 @@ fig.update_layout(
 )
 
 fig.show()
+
